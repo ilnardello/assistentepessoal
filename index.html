@@ -1102,7 +1102,8 @@ function closeNotifBanner() {
 
 // ========== DEMO DATA ==========
 function addDemoData() {
-  if (tasks.length > 0) return;
+  if (localStorage.getItem('ambar_initialized')) return;
+  localStorage.setItem('ambar_initialized', '1');
   const today = new Date().toISOString().split('T')[0];
   const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
   const nextWeek = new Date(Date.now() + 7*86400000).toISOString().split('T')[0];
