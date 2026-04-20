@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0a0f">
+<meta name="color-scheme" content="dark">
+<meta name="supported-color-schemes" content="dark">
+<title>Âmbar — Sua Assistente Pessoal</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: rgba(255,255,255,0.07);
+    --gold: #d4af50;
+    --gold-light: #f0d47e;
+    --gold-dim: rgba(212,175,80,0.18);
+    --text: #e8e4d8;
+    --text-muted: #7a7870;
+    --text-soft: #b0aa98;
+    --urgent: #e05a4e;
+    --ok: #5cb87a;
+    --info: #5b8fd4;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html {
+    background: #0a0a0f;
+    color-scheme: dark;
+  }
+  body {
+    background: #0a0a0f !important;
+    background-color: #0a0a0f !important;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    overflow-x: hidden;
+  }
+
+  /* Ambient background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -30vh; left: 50%;
+    transform: translateX(-50%);
+    width: 70vw; height: 60vh;
+    background: radial-gradient(ellipse, rgba(201,168,76,0.07) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* HEADER */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    color: var(--gold-light);
+  }
+  .logo span { font-style: italic; }
+  .header-date {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    text-align: right;
+  }
+
+  /* MAIN LAYOUT */
+  main {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 16px 100px;
+    position: relative; z-index: 1;
+  }
+
+  /* GREETING SECTION */
+  .greeting {
+    padding: 28px 0 20px;
+  }
+  .greeting-time {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .greeting-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 300;
+    line-height: 1.2;
+    color: #f0ece0;
+  }
+  .greeting-title em { font-style: italic; color: #f0d47e; }
+
+  /* AI CHAT BUBBLE */
+  .ai-bubble {
+    background: linear-gradient(135deg, rgba(201,168,76,0.12), rgba(201,168,76,0.04));
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-bottom: 24px;
+    position: relative;
+    min-height: 64px;
+  }
+  .ai-bubble::before {
+    content: '✦';
+    position: absolute;
+    top: -10px; left: 18px;
+    background: var(--bg);
+    padding: 0 6px;
+    color: var(--gold);
+    font-size: 12px;
+  }
+  .ai-label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .ai-text {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-soft);
+  }
+  .ai-loading {
+    display: flex; gap: 5px; align-items: center; height: 20px;
+  }
+  .ai-loading span {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+  .ai-loading span:nth-child(2) { animation-delay: 0.2s; }
+  .ai-loading span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes pulse {
+    0%,80%,100% { opacity: 0.2; transform: scale(0.8); }
+    40% { opacity: 1; transform: scale(1); }
+  }
+
+  /* SECTION */
+  .section {
+    margin-bottom: 28px;
+  }
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    color: var(--text);
+  }
+  .section-action {
+    font-size: 11px;
+    color: var(--gold);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    border: none; background: none;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(201,168,76,0.3);
+    transition: all 0.2s;
+  }
+  .section-action:hover { background: var(--gold-dim); }
+
+  /* TASK CARD */
+  .task-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    display: flex; align-items: flex-start; gap: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .task-card:hover { border-color: rgba(201,168,76,0.2); background: var(--surface2); }
+  .task-card.done { opacity: 0.45; }
+  .task-card.done .task-title { text-decoration: line-through; }
+  .task-priority-bar {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+  .priority-high .task-priority-bar { background: var(--urgent); }
+  .priority-medium .task-priority-bar { background: var(--gold); }
+  .priority-low .task-priority-bar { background: var(--ok); }
+  .task-check {
+    width: 20px; height: 20px; min-width: 20px;
+    border-radius: 6px;
+    border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    margin-top: 1px;
+  }
+  .task-card.done .task-check {
+    background: var(--gold-dim);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+  .task-content { flex: 1; min-width: 0; }
+  .task-title {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+  .task-meta {
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .task-tag {
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    padding: 2px 7px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+  .tag-contas { background: rgba(224,90,78,0.15); color: #e05a4e; }
+  .tag-aniversario { background: rgba(91,143,212,0.15); color: #5b8fd4; }
+  .tag-evento { background: rgba(201,168,76,0.15); color: var(--gold); }
+  .tag-pessoal { background: rgba(92,184,122,0.15); color: var(--ok); }
+  .tag-saude { background: rgba(175,112,212,0.15); color: #af70d4; }
+  .task-date {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .task-delete {
+    opacity: 0;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s;
+    padding: 0;
+    min-width: 20px;
+  }
+  .task-card:hover .task-delete { opacity: 0.5; }
+  .task-delete:hover { opacity: 1 !important; color: var(--urgent); }
+
+  /* ADD FORM */
+  .add-form {
+    background: var(--surface);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 8px;
+    display: none;
+  }
+  .add-form.visible { display: block; animation: slideIn 0.2s ease; }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .form-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .form-input {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    min-width: 0;
+  }
+  .form-input:focus { border-color: rgba(201,168,76,0.4); }
+  .form-input::placeholder { color: var(--text-muted); }
+  select.form-input { cursor: pointer; }
+  .form-submit {
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    transition: all 0.2s;
+  }
+  .form-submit:hover { background: var(--gold-light); }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 24px;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-style: italic;
+  }
+
+  /* BOTTOM NAV */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(24px);
+    border-top: 1px solid var(--border);
+    display: flex;
+    z-index: 100;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .nav-btn {
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 12px 8px;
+    background: none; border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    gap: 4px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .nav-btn.active { color: var(--gold); }
+  .nav-btn svg { width: 20px; height: 20px; }
+  .nav-label { font-size: 10px; letter-spacing: 0.05em; }
+
+  /* NOTIF BANNER */
+  .notif-banner {
+    position: fixed;
+    top: 70px; left: 16px; right: 16px;
+    background: linear-gradient(135deg, var(--surface2), var(--surface));
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    z-index: 200;
+    display: none;
+    animation: slideDown 0.3s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .notif-banner.show { display: flex; gap: 12px; align-items: flex-start; }
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .notif-icon { font-size: 20px; }
+  .notif-content { flex: 1; }
+  .notif-title { font-size: 13px; font-weight: 500; margin-bottom: 3px; color: var(--text); }
+  .notif-msg { font-size: 12px; color: var(--text-soft); line-height: 1.4; }
+  .notif-close {
+    background: none; border: none; color: var(--text-muted);
+    cursor: pointer; font-size: 18px; padding: 0;
+  }
+
+  /* NOTIFICATION PERMISSION */
+  .notif-prompt {
+    background: linear-gradient(135deg, rgba(91,143,212,0.1), rgba(91,143,212,0.04));
+    border: 1px solid rgba(91,143,212,0.25);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .notif-prompt-text { flex: 1; font-size: 13px; color: var(--text-soft); line-height: 1.4; }
+  .notif-prompt-text strong { color: var(--text); font-weight: 500; }
+  .notif-enable-btn {
+    background: rgba(91,143,212,0.2);
+    border: 1px solid rgba(91,143,212,0.4);
+    border-radius: 8px;
+    padding: 8px 14px;
+    color: #5b8fd4;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .notif-enable-btn:hover { background: rgba(91,143,212,0.3); }
+
+  /* TABS */
+  .tabs {
+    display: flex; gap: 6px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: none;
+    color: var(--text-muted);
+    white-space: nowrap;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .tab.active {
+    background: var(--gold-dim);
+    border-color: rgba(201,168,76,0.35);
+    color: var(--gold);
+  }
+
+  /* VIEWS */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* STATS ROW */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--gold-light);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label { font-size: 10px; color: var(--text-muted); letter-spacing: 0.06em; }
+
+  /* AI CHAT VIEW */
+  .chat-messages {
+    padding: 12px 0;
+    min-height: 200px;
+  }
+  .chat-msg {
+    margin-bottom: 14px;
+    animation: fadeUp 0.3s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .chat-msg.user { text-align: right; }
+  .chat-bubble-inner {
+    display: inline-block;
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: left;
+  }
+  .chat-msg.ai .chat-bubble-inner {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-soft);
+  }
+  .chat-msg.user .chat-bubble-inner {
+    background: var(--gold-dim);
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--text);
+  }
+  .chat-input-row {
+    display: flex; gap: 8px;
+    margin-top: 12px;
+  }
+  .chat-input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    resize: none;
+    transition: border-color 0.2s;
+  }
+  .chat-input:focus { border-color: rgba(201,168,76,0.4); }
+  .chat-send {
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    border-radius: 12px;
+    width: 46px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .chat-send:hover { background: var(--gold-light); }
+  .chat-send:disabled { opacity: 0.4; cursor: not-allowed; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><span>Â</span>mbar</div>
+  <div class="header-date" id="headerDate"></div>
+</header>
+
+<div class="notif-banner" id="notifBanner">
+  <div class="notif-icon">🔔</div>
+  <div class="notif-content">
+    <div class="notif-title" id="notifTitle"></div>
+    <div class="notif-msg" id="notifMsg"></div>
+  </div>
+  <button class="notif-close" onclick="closeNotifBanner()">×</button>
+</div>
+
+<main>
+
+  <!-- HOME VIEW -->
+  <div class="view active" id="view-home">
+    <div class="greeting">
+      <div class="greeting-time" id="greetingTime"></div>
+      <div class="greeting-title" id="greetingTitle"></div>
+    </div>
+
+    <div id="notifPrompt" class="notif-prompt" style="display:none">
+      <span style="font-size:22px">🔔</span>
+      <div class="notif-prompt-text"><strong>Ativar notificações?</strong><br>A Âmbar pode te lembrar de tarefas importantes automaticamente.</div>
+      <button class="notif-enable-btn" onclick="requestNotifPermission()">Ativar</button>
+    </div>
+
+    <div class="ai-bubble">
+      <div class="ai-label">✦ Âmbar diz</div>
+      <div class="ai-text" id="aiGreeting">
+        <div class="ai-loading"><span></span><span></span><span></span></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Para hoje</div>
+        <button class="section-action" onclick="toggleAddForm('today')">+ Adicionar</button>
+      </div>
+      <div class="add-form" id="addForm-today">
+        <div class="form-row">
+          <input class="form-input" id="taskTitle-today" placeholder="O que precisa fazer?" />
+        </div>
+        <div class="form-row">
+          <select class="form-input" id="taskCat-today">
+            <option value="pessoal">Pessoal</option>
+            <option value="contas">Contas/Pagamentos</option>
+            <option value="saude">Saúde</option>
+            <option value="evento">Evento</option>
+            <option value="aniversario">Aniversário</option>
+          </select>
+          <select class="form-input" id="taskPrio-today">
+            <option value="medium">Normal</option>
+            <option value="high">Urgente</option>
+            <option value="low">Baixa</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <input type="date" class="form-input" id="taskDate-today" />
+          <button class="form-submit" onclick="addTask('today')">Salvar</button>
+        </div>
+      </div>
+      <div id="taskList-today"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Próximos eventos</div>
+        <button class="section-action" onclick="switchView('agenda')">Ver todos</button>
+      </div>
+      <div id="taskList-upcoming"></div>
+    </div>
+  </div>
+
+  <!-- AGENDA VIEW -->
+  <div class="view" id="view-agenda">
+    <div class="greeting" style="padding-top:20px">
+      <div class="greeting-time">Agenda completa</div>
+      <div class="greeting-title">Todas as <em>tarefas</em></div>
+    </div>
+
+    <div class="tabs" id="agendaTabs">
+      <button class="tab active" onclick="filterAgenda('all')">Tudo</button>
+      <button class="tab" onclick="filterAgenda('contas')">💳 Contas</button>
+      <button class="tab" onclick="filterAgenda('aniversario')">🎂 Aniversários</button>
+      <button class="tab" onclick="filterAgenda('evento')">🗓 Eventos</button>
+      <button class="tab" onclick="filterAgenda('saude')">💊 Saúde</button>
+      <button class="tab" onclick="filterAgenda('pessoal')">✦ Pessoal</button>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title" id="agendaTitle">Todas as tarefas</div>
+        <button class="section-action" onclick="toggleAddForm('agenda')">+ Adicionar</button>
+      </div>
+      <div class="add-form" id="addForm-agenda">
+        <div class="form-row">
+          <input class="form-input" id="taskTitle-agenda" placeholder="Título da tarefa" />
+        </div>
+        <div class="form-row">
+          <select class="form-input" id="taskCat-agenda">
+            <option value="pessoal">Pessoal</option>
+            <option value="contas">Contas/Pagamentos</option>
+            <option value="saude">Saúde</option>
+            <option value="evento">Evento</option>
+            <option value="aniversario">Aniversário</option>
+          </select>
+          <select class="form-input" id="taskPrio-agenda">
+            <option value="medium">Normal</option>
+            <option value="high">Urgente</option>
+            <option value="low">Baixa</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <input type="date" class="form-input" id="taskDate-agenda" />
+          <button class="form-submit" onclick="addTask('agenda')">Salvar</button>
+        </div>
+      </div>
+      <div id="taskList-agenda"></div>
+    </div>
+  </div>
+
+  <!-- AI CHAT VIEW -->
+  <div class="view" id="view-chat">
+    <div class="greeting" style="padding-top:20px">
+      <div class="greeting-time">Converse com a IA</div>
+      <div class="greeting-title"><em>Âmbar</em> está aqui</div>
+    </div>
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input-row">
+      <textarea class="chat-input" id="chatInput" rows="1" placeholder="Pergunte algo à Âmbar..." onkeydown="chatKeydown(event)"></textarea>
+      <button class="chat-send" id="chatSend" onclick="sendChat()">↑</button>
+    </div>
+  </div>
+
+  <!-- STATS VIEW -->
+  <div class="view" id="view-stats">
+    <div class="greeting" style="padding-top:20px">
+      <div class="greeting-time">Visão geral</div>
+      <div class="greeting-title">Seu <em>resumo</em></div>
+    </div>
+    <div class="stats-row" id="statsRow"></div>
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Concluídas hoje</div>
+      </div>
+      <div id="doneList"></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" onclick="switchView('home')" id="nav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+    <span class="nav-label">Início</span>
+  </button>
+  <button class="nav-btn" onclick="switchView('agenda')" id="nav-agenda">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    <span class="nav-label">Agenda</span>
+  </button>
+  <button class="nav-btn" onclick="switchView('chat')" id="nav-chat">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+    <span class="nav-label">Âmbar IA</span>
+  </button>
+  <button class="nav-btn" onclick="switchView('stats')" id="nav-stats">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+    <span class="nav-label">Resumo</span>
+  </button>
+</nav>
+
+<script>
+// ========== STATE ==========
+let tasks = JSON.parse(localStorage.getItem('ambar_tasks') || '[]');
+let chatHistory = [];
+let currentFilter = 'all';
+let notifInterval = null;
+
+const CATEGORY_ICONS = {
+  pessoal: '✦', contas: '💳', saude: '💊', evento: '🗓', aniversario: '🎂'
+};
+const CATEGORY_LABELS = {
+  pessoal: 'Pessoal', contas: 'Pagamento', saude: 'Saúde', evento: 'Evento', aniversario: 'Aniversário'
+};
+
+// ========== INIT ==========
+function init() {
+  updateHeader();
+  updateGreeting();
+  loadAIGreeting();
+  renderAll();
+  checkNotifPermission();
+  scheduleNotifCheck();
+  setInterval(updateHeader, 60000);
+}
+
+function saveTasks() {
+  localStorage.setItem('ambar_tasks', JSON.stringify(tasks));
+}
+
+function updateHeader() {
+  const now = new Date();
+  const days = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  document.getElementById('headerDate').innerHTML =
+    `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]}`;
+}
+
+function updateGreeting() {
+  const h = new Date().getHours();
+  let period, title;
+  if (h < 12) { period = 'BOM DIA'; title = 'Bom dia,<br><em>Igor</em> ☀️'; }
+  else if (h < 18) { period = 'BOA TARDE'; title = 'Boa tarde,<br><em>Igor</em> 🌤'; }
+  else { period = 'BOA NOITE'; title = 'Boa noite,<br><em>Igor</em> 🌙'; }
+  document.getElementById('greetingTime').textContent = period;
+  document.getElementById('greetingTitle').innerHTML = title;
+}
+
+// ========== AI GREETING ==========
+async function loadAIGreeting() {
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0];
+  const todayTasks = tasks.filter(t => !t.done && (t.date === todayStr || !t.date));
+  const upcoming = tasks.filter(t => !t.done && t.date > todayStr);
+  const urgent = tasks.filter(t => !t.done && t.priority === 'high');
+
+  const context = `
+Você é Âmbar, uma assistente pessoal gentil, inteligente e organizada.
+Tarefas de hoje (${todayTasks.length}): ${JSON.stringify(todayTasks.slice(0,5))}
+Tarefas urgentes (${urgent.length}): ${JSON.stringify(urgent.slice(0,3))}
+Próximos eventos (${upcoming.length}): ${JSON.stringify(upcoming.slice(0,3))}
+Data atual: ${today.toLocaleDateString('pt-BR', {weekday:'long', day:'numeric', month:'long'})}
+Hora: ${today.getHours()}h
+`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: context + '\nResponda em 2-3 frases curtas e calorosas em português. Comente sobre as tarefas do dia ou próximos eventos. Sem formatação markdown.',
+        messages: [{ role: 'user', content: 'Me dê um resumo rápido do meu dia.' }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.[0]?.text || 'Tudo organizado para hoje! 🌟';
+    document.getElementById('aiGreeting').textContent = text;
+  } catch (e) {
+    const greetings = [
+      'Tudo pronto para um dia incrível! Veja suas tarefas e mantenha o foco. ✨',
+      'Olá! Organize seu dia com calma. Pequenos passos levam a grandes conquistas. 🌟',
+      'Bom dia! Sua agenda está pronta. Vamos juntos! 💛'
+    ];
+    document.getElementById('aiGreeting').textContent = greetings[Math.floor(Math.random()*greetings.length)];
+  }
+}
+
+// ========== TASKS ==========
+function addTask(source) {
+  const title = document.getElementById(`taskTitle-${source}`).value.trim();
+  if (!title) return;
+  const cat = document.getElementById(`taskCat-${source}`).value;
+  const prio = document.getElementById(`taskPrio-${source}`).value;
+  const date = document.getElementById(`taskDate-${source}`).value;
+
+  const task = {
+    id: Date.now(),
+    title,
+    category: cat,
+    priority: prio,
+    date: date || new Date().toISOString().split('T')[0],
+    done: false,
+    createdAt: new Date().toISOString()
+  };
+  tasks.push(task);
+  saveTasks();
+  document.getElementById(`taskTitle-${source}`).value = '';
+  document.getElementById(`taskDate-${source}`).value = '';
+  toggleAddForm(source);
+  renderAll();
+  loadAIGreeting();
+}
+
+function toggleTask(id) {
+  const t = tasks.find(t => t.id === id);
+  if (t) { t.done = !t.done; saveTasks(); renderAll(); updateStats(); }
+}
+
+function deleteTask(id) {
+  tasks = tasks.filter(t => t.id !== id);
+  saveTasks();
+  renderAll();
+}
+
+function toggleAddForm(source) {
+  const form = document.getElementById(`addForm-${source}`);
+  form.classList.toggle('visible');
+  if (form.classList.contains('visible')) {
+    document.getElementById(`taskDate-${source}`).value = new Date().toISOString().split('T')[0];
+    document.getElementById(`taskTitle-${source}`).focus();
+  }
+}
+
+// ========== RENDER ==========
+function renderAll() {
+  renderToday();
+  renderUpcoming();
+  renderAgenda();
+  updateStats();
+  renderDone();
+}
+
+function makeTaskHTML(t) {
+  const tagClass = `tag-${t.category}`;
+  const icon = CATEGORY_ICONS[t.category] || '•';
+  const label = CATEGORY_LABELS[t.category] || t.category;
+  const dateLabel = t.date ? `<span class="task-date">${formatDate(t.date)}</span>` : '';
+  return `
+    <div class="task-card priority-${t.priority} ${t.done?'done':''}" onclick="toggleTask(${t.id})">
+      <div class="task-priority-bar"></div>
+      <div class="task-check">${t.done ? '✓' : ''}</div>
+      <div class="task-content">
+        <div class="task-title">${t.title}</div>
+        <div class="task-meta">
+          <span class="task-tag ${tagClass}">${icon} ${label}</span>
+          ${dateLabel}
+        </div>
+      </div>
+      <button class="task-delete" onclick="event.stopPropagation();deleteTask(${t.id})">×</button>
+    </div>`;
+}
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  const today = new Date();
+  const diff = Math.round((d - today) / 86400000);
+  if (diff === 0) return 'Hoje';
+  if (diff === 1) return 'Amanhã';
+  if (diff === -1) return 'Ontem';
+  if (diff > 0 && diff < 7) return `Em ${diff} dias`;
+  return d.toLocaleDateString('pt-BR', { day:'numeric', month:'short' });
+}
+
+function renderToday() {
+  const todayStr = new Date().toISOString().split('T')[0];
+  const todayTasks = tasks.filter(t => !t.done && (t.date === todayStr || !t.date));
+  const el = document.getElementById('taskList-today');
+  if (todayTasks.length === 0) {
+    el.innerHTML = '<div class="empty-state">Nenhuma tarefa para hoje 🎉</div>';
+  } else {
+    el.innerHTML = todayTasks.sort((a,b) => {
+      const p = {high:0,medium:1,low:2};
+      return p[a.priority] - p[b.priority];
+    }).map(makeTaskHTML).join('');
+  }
+}
+
+function renderUpcoming() {
+  const todayStr = new Date().toISOString().split('T')[0];
+  const upcoming = tasks.filter(t => !t.done && t.date > todayStr)
+    .sort((a,b) => a.date.localeCompare(b.date)).slice(0,4);
+  const el = document.getElementById('taskList-upcoming');
+  if (upcoming.length === 0) {
+    el.innerHTML = '<div class="empty-state">Nenhum evento próximo</div>';
+  } else {
+    el.innerHTML = upcoming.map(makeTaskHTML).join('');
+  }
+}
+
+function renderAgenda() {
+  let filtered = tasks.filter(t => !t.done);
+  if (currentFilter !== 'all') filtered = filtered.filter(t => t.category === currentFilter);
+  filtered.sort((a,b) => (a.date||'').localeCompare(b.date||''));
+  const el = document.getElementById('taskList-agenda');
+  if (filtered.length === 0) {
+    el.innerHTML = '<div class="empty-state">Nenhuma tarefa nesta categoria</div>';
+  } else {
+    el.innerHTML = filtered.map(makeTaskHTML).join('');
+  }
+}
+
+function filterAgenda(cat) {
+  currentFilter = cat;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  const titles = { all: 'Todas as tarefas', contas: 'Contas e Pagamentos', aniversario: 'Aniversários', evento: 'Eventos', saude: 'Saúde', pessoal: 'Pessoal' };
+  document.getElementById('agendaTitle').textContent = titles[cat] || 'Tarefas';
+  renderAgenda();
+}
+
+function updateStats() {
+  const todayStr = new Date().toISOString().split('T')[0];
+  const total = tasks.filter(t => !t.done).length;
+  const todayDone = tasks.filter(t => t.done && t.date === todayStr).length;
+  const urgent = tasks.filter(t => !t.done && t.priority === 'high').length;
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">Pendentes</div></div>
+    <div class="stat-card"><div class="stat-num">${todayDone}</div><div class="stat-label">Concluídas</div></div>
+    <div class="stat-card"><div class="stat-num">${urgent}</div><div class="stat-label">Urgentes</div></div>
+  `;
+}
+
+function renderDone() {
+  const done = tasks.filter(t => t.done);
+  const el = document.getElementById('doneList');
+  if (done.length === 0) {
+    el.innerHTML = '<div class="empty-state">Nenhuma tarefa concluída ainda</div>';
+  } else {
+    el.innerHTML = done.slice(-10).reverse().map(makeTaskHTML).join('');
+  }
+}
+
+// ========== NAVIGATION ==========
+function switchView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`view-${name}`).classList.add('active');
+  document.getElementById(`nav-${name}`).classList.add('active');
+  if (name === 'chat' && chatHistory.length === 0) initChat();
+  if (name === 'stats') { updateStats(); renderDone(); }
+}
+
+// ========== AI CHAT ==========
+function initChat() {
+  const msg = { role: 'ai', text: 'Olá! Sou a Âmbar, sua assistente pessoal. Posso te ajudar a organizar tarefas, lembrar de datas importantes, sugerir prioridades e muito mais. O que posso fazer por você hoje? 💛' };
+  chatHistory = [];
+  addChatMsg(msg.role, msg.text);
+}
+
+function addChatMsg(role, text) {
+  const el = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = `chat-msg ${role}`;
+  div.innerHTML = `<div class="chat-bubble-inner">${text}</div>`;
+  el.appendChild(div);
+  el.scrollTop = el.scrollHeight;
+}
+
+function addChatLoading() {
+  const el = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'chat-msg ai';
+  div.id = 'chatLoading';
+  div.innerHTML = `<div class="chat-bubble-inner"><div class="ai-loading"><span></span><span></span><span></span></div></div>`;
+  el.appendChild(div);
+  el.scrollTop = el.scrollHeight;
+}
+
+function chatKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+}
+
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  document.getElementById('chatSend').disabled = true;
+  addChatMsg('user', text);
+  addChatLoading();
+
+  const todayStr = new Date().toISOString().split('T')[0];
+  const systemPrompt = `Você é Âmbar, uma assistente pessoal calorosa, inteligente e organizada.
+Data de hoje: ${new Date().toLocaleDateString('pt-BR', {weekday:'long', day:'numeric', month:'long', year:'numeric'})}
+Tarefas pendentes do usuário: ${JSON.stringify(tasks.filter(t=>!t.done).slice(0,20))}
+Tarefas concluídas: ${tasks.filter(t=>t.done).length}
+Responda em português, de forma natural e calorosa. Máximo 3-4 frases, sem markdown.
+Se o usuário pedir para adicionar uma tarefa, explique que ele pode usar o botão "+" na tela de Agenda.`;
+
+  const messages = [
+    ...chatHistory.slice(-10),
+    { role: 'user', content: text }
+  ];
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages
+      })
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || 'Desculpe, não consegui processar. Tente novamente!';
+
+    document.getElementById('chatLoading')?.remove();
+    addChatMsg('ai', reply);
+    chatHistory.push({ role: 'user', content: text });
+    chatHistory.push({ role: 'assistant', content: reply });
+  } catch (e) {
+    document.getElementById('chatLoading')?.remove();
+    addChatMsg('ai', 'Ops! Estou com dificuldade de conexão agora. Tente novamente em instantes. 💛');
+  }
+
+  document.getElementById('chatSend').disabled = false;
+}
+
+// ========== NOTIFICATIONS ==========
+function checkNotifPermission() {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'default') {
+    document.getElementById('notifPrompt').style.display = 'flex';
+  }
+}
+
+async function requestNotifPermission() {
+  if (!('Notification' in window)) return;
+  const perm = await Notification.requestPermission();
+  document.getElementById('notifPrompt').style.display = 'none';
+  if (perm === 'granted') {
+    showNotifBanner('🎉 Notificações ativadas!', 'A Âmbar vai te lembrar das suas tarefas importantes.');
+    scheduleNotifCheck();
+  }
+}
+
+function scheduleNotifCheck() {
+  if (notifInterval) clearInterval(notifInterval);
+  notifInterval = setInterval(checkAndNotify, 60 * 60 * 1000); // hourly
+  checkAndNotify(); // run now too
+}
+
+function checkAndNotify() {
+  const now = new Date();
+  const h = now.getHours();
+  const todayStr = now.toISOString().split('T')[0];
+  const tomorrowStr = new Date(now.getTime() + 86400000).toISOString().split('T')[0];
+
+  // Only notify between 8am and 9pm
+  if (h < 8 || h > 21) return;
+
+  const urgent = tasks.filter(t => !t.done && t.priority === 'high');
+  const dueToday = tasks.filter(t => !t.done && t.date === todayStr);
+  const dueTomorrow = tasks.filter(t => !t.done && t.date === tomorrowStr);
+  const birthdays = tasks.filter(t => !t.done && t.category === 'aniversario' && t.date === tomorrowStr);
+
+  if (h === 8 && dueToday.length > 0) {
+    sendPushNotif('☀️ Bom dia, Igor!', `Você tem ${dueToday.length} tarefa(s) para hoje. Vamos nessa!`);
+    showNotifBanner('☀️ Bom dia!', `${dueToday.length} tarefa(s) para hoje.`);
+  }
+  if (h === 9 && urgent.length > 0) {
+    sendPushNotif('⚠️ Tarefas urgentes!', `Você tem ${urgent.length} tarefa(s) urgente(s) pendentes.`);
+  }
+  if (h === 19 && dueToday.length > 0) {
+    sendPushNotif('🌙 Final do dia', `Ainda há ${dueToday.length} tarefa(s) pendente(s) para hoje.`);
+    showNotifBanner('🌙 Final do dia', `${dueToday.length} tarefa(s) ainda pendentes hoje.`);
+  }
+  if (birthdays.length > 0 && h === 8) {
+    birthdays.forEach(b => {
+      sendPushNotif('🎂 Aniversário amanhã!', `Não esqueça: ${b.title}`);
+    });
+  }
+  if (dueTomorrow.length > 0 && h === 20) {
+    sendPushNotif('📅 Lembrança de amanhã', `${dueTomorrow.length} tarefa(s) vencem amanhã.`);
+  }
+}
+
+function sendPushNotif(title, body) {
+  if (Notification.permission === 'granted') {
+    new Notification(title, { body, icon: '💛' });
+  }
+}
+
+function showNotifBanner(title, msg) {
+  document.getElementById('notifTitle').textContent = title;
+  document.getElementById('notifMsg').textContent = msg;
+  const banner = document.getElementById('notifBanner');
+  banner.classList.add('show');
+  setTimeout(() => banner.classList.remove('show'), 5000);
+}
+
+function closeNotifBanner() {
+  document.getElementById('notifBanner').classList.remove('show');
+}
+
+// ========== DEMO DATA ==========
+function addDemoData() {
+  if (tasks.length > 0) return;
+  const today = new Date().toISOString().split('T')[0];
+  const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+  const nextWeek = new Date(Date.now() + 7*86400000).toISOString().split('T')[0];
+
+  tasks = [
+    { id: 1, title: 'Pagar conta de luz', category: 'contas', priority: 'high', date: today, done: false, createdAt: new Date().toISOString() },
+    { id: 2, title: 'Consulta médica — Dr. Carvalho', category: 'saude', priority: 'medium', date: tomorrow, done: false, createdAt: new Date().toISOString() },
+    { id: 3, title: 'Aniversário da Mayara 🎂', category: 'aniversario', priority: 'high', date: nextWeek, done: false, createdAt: new Date().toISOString() },
+    { id: 4, title: 'Comprar presente do aniversário', category: 'pessoal', priority: 'medium', date: tomorrow, done: false, createdAt: new Date().toISOString() },
+    { id: 5, title: 'Cartão de crédito — vencimento dia 7', category: 'contas', priority: 'medium', date: today, done: false, createdAt: new Date().toISOString() },
+  ];
+  saveTasks();
+}
+
+// ========== START ==========
+addDemoData();
+init();
+</script>
+</body>
+</html>
